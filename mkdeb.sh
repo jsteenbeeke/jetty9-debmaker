@@ -41,9 +41,9 @@ if [ $# == 1 ]; then
 		cd $BASE/$TARGET_DATA/
 
 		cd var/lib/jetty9
-		ln -v -s ../../../usr/share/jetty9/webapps webapps
+		ln -v -s /usr/share/jetty9/webapps webapps
 		cd usr/share/jetty9
-		ln -v -s ../../../etc/jetty9 etc
+		ln -v -s /etc/jetty9 etc
 		cd ../../..
 
 		tar --lzma -cvf ../data.tar.xz *	
