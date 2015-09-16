@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove)
+        # Remove auth for jetty to open privileged ports via authbind.
+        JETTY_USER="jetty"
+        JETTY_UID="`id -u $JETTY_USER`"
+        if [ -f "/etc/authbind/byuid/$JETTY_UID" ]; then
+                rm -f /etc/authbind/byuid/$JETTY_UID
+        fi
+    ;;
+esac
+
+# Automatically added by dh_installinit
+if [ -x "/etc/init.d/jetty9" ]; then
+	invoke-rc.d jetty9 stop || exit $?
+fi
+# End automatically added section
+
