@@ -9,6 +9,11 @@ USR_LIB_JETTY="lib modules VERSION.txt README.TXT license-eplv10-aslv20.html sta
 ETC_JETTY="etc"
 BASE=`pwd`
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 if [ $# == 1 ]; then
 	if [ -d $1 ]; then
 		if [ -d target ]; then
@@ -27,13 +32,17 @@ if [ $# == 1 ]; then
 
 		cd $1
 
+		echo /etc/jetty9
 		for i in $ETC_JETTY; do
-				cp -v -r $i/* $BASE/$TARGET_DATA/etc/jetty9/
+				cp -r $i/* $BASE/$TARGET_DATA/etc/jetty9/
 		done
 
+		echo /usr/share/jetty9
 		for i in $USR_LIB_JETTY; do
-			cp -v -r $i $BASE/$TARGET_DATA/usr/share/jetty9/
+			cp -r $i $BASE/$TARGET_DATA/usr/share/jetty9/
 		done
+
+		echo /
 
 		cp -v bin/jetty.sh $BASE/$TARGET_DATA/etc/init.d/jetty9
 		cp -v $BASE/etc-default-jetty $BASE/$TARGET_DATA/etc/default/jetty9
@@ -82,14 +91,22 @@ if [ $# == 1 ]; then
 		cd $BASE/$TARGET_DATA/etc
 		
 		for i in `find *`; do
-			echo /etc/$i >> $BASE/$TARGET_CONTROL/conffiles
+			if [ ! -d $i ]; then
+				echo /etc/$i >> $BASE/$TARGET_CONTROL/conffiles
+			fi
 		done
+
+		chmod 644 $BASE/$TARGET_CONTROL/conffiles
+		chmod 755 $BASE/$TARGET_CONTROL/postinst
+		chmod 755 $BASE/$TARGET_CONTROL/prerm
+		chmod 755 $BASE/$TARGET_CONTROL/postrm
 
 		echo "Generating: md5sums"
 
 		cd $BASE/$TARGET_DATA/
 
 		touch $BASE/$TARGET_CONTROL/md5sums
+		chmod 644 $BASE/$TARGET_CONTROL/md5sums
 
 		find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > $BASE/$TARGET_CONTROL/md5sums
 
@@ -97,11 +114,19 @@ if [ $# == 1 ]; then
 
 		echo "2.0" >> $BASE/$TARGET/debian-binary
 
+		cd $BASE/$TARGET/
+
+		for i in `find *`; do
+			if [ -d $i ]; then
+				chmod 755 $i
+			fi
+		done
+
 		echo "Packaging data"
 
 		cd $BASE/$TARGET_DATA/
 
-		tar --lzma -cf $BASE/$TARGET/data.tar.xz *
+		tar --lzma -cvf $BASE/$TARGET/data.tar.xz *
 
 		echo "Packaging control"
 
@@ -113,7 +138,7 @@ if [ $# == 1 ]; then
 
 		ar -r jetty-$VERSION.deb debian-binary control.tar.gz data.tar.xz
 
-		lintian jetty-$VERSION.deb
+		lintian jetty-$VERSION.deb --suppress-tags unknown-java-class-version
 	else
 		echo $1 is not a folder
 	fi
