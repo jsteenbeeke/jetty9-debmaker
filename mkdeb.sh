@@ -113,7 +113,7 @@ if [ $# == 1 ]; then
 
 		ar -r jetty-$VERSION.deb debian-binary control.tar.gz data.tar.xz
 
-		dpkg-deb -c jetty-$VERSION.deb
+		lintian jetty-$VERSION.deb
 	else
 		echo $1 is not a folder
 	fi
