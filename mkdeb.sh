@@ -9,11 +9,6 @@ USR_LIB_JETTY="lib modules VERSION.txt README.TXT license-eplv10-aslv20.html sta
 ETC_JETTY="etc"
 BASE=`pwd`
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
-
 if [ $# == 1 ]; then
 	if [ -d $1 ]; then
 		if [ -d target ]; then
