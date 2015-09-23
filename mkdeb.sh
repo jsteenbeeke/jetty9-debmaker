@@ -9,6 +9,11 @@ USR_LIB_JETTY="lib modules VERSION.txt README.TXT license-eplv10-aslv20.html sta
 ETC_JETTY="etc"
 BASE=`pwd`
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 if [ $# == 1 ]; then
 	if [ -d $1 ]; then
 		if [ -d target ]; then
@@ -51,6 +56,7 @@ if [ $# == 1 ]; then
 
 		cd var/lib/jetty9
 		fakeroot ln -s /usr/share/jetty9/webapps webapps
+		cd ../../..
 		cd usr/share/jetty9
 		fakeroot ln -s /etc/jetty9 etc
 		cd ../../..
