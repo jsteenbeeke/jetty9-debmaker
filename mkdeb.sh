@@ -102,7 +102,6 @@ if [ $# == 1 ]; then
 		fakeroot chmod 755 $BASE/$TARGET_CONTROL/postinst
 		fakeroot chmod 755 $BASE/$TARGET_CONTROL/prerm
 		fakeroot chmod 755 $BASE/$TARGET_CONTROL/postrm
-		fakeroot chmod -R 755 $BASE/$TARGET_DATA/usr/share/jetty9
 
 		echo "Generating: md5sums"
 

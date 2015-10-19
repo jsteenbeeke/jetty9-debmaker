@@ -11,7 +11,7 @@ case "$1" in
 		--group --disabled-password --shell /bin/false \
 		$JETTY_USER
 	fi
-	chown -R jetty:adm /var/cache/jetty9 /var/log/jetty9 /var/lib/jetty9
+	chown -R jetty:adm /var/cache/jetty9 /var/log/jetty9 /var/lib/jetty9 /usr/share/jetty9
 	chmod 750 /var/log/jetty9
 
 	# Authorize user jetty to open privileged ports via authbind.
